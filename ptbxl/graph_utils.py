@@ -1,0 +1,64 @@
+from tensorflow import keras
+from tensorflow.keras import layers
+from sklearn import preprocessing
+from tensorflow.keras.layers.experimental import RandomFourierFeatures
+import pandas as pd
+import numpy as np
+import tensorflow as tf
+import wfdb
+import ast
+import itertools
+import matplotlib.pyplot as plt
+import operator
+import networkx as nx
+
+def scp_graph(scp_statements):
+    diagnostic_class = scp_statements.loc[scp_statements['diagnostic'] == 1.0,'diagnostic_class'].unique()
+
+    G = nx.Graph()
+
+    colors = [
+        "gold",
+        "violet",
+        "darkorange",
+    ]
+
+    for k in diagnostic_class:
+        G.add_node(k + ' class', layer=0)
+        diagnostic_subclass = scp_statements.loc[scp_statements['diagnostic_class'] == k, 'diagnostic_subclass'].unique()
+        for s in diagnostic_subclass:
+            G.add_node(s + ' subclass', layer=1)
+            G.add_edge(k + ' class', s + ' subclass')
+            diag_codes = scp_statements.loc[scp_statements['diagnostic_subclass'] == s].index
+            for c in diag_codes:
+                G.add_node(c, layer=2)
+                G.add_edge(s + ' subclass', c)
+
+    pos = nx.multipartite_layout(G, subset_key="layer")
+
+    color = [colors[data["layer"]] for v, data in G.nodes(data=True)]
+
+    for k, v in pos.items():
+        if ' subclass' in k:
+            neighbors = G.neighbors(k)
+            new_pos = pos[k]
+            acc = []
+            for n in neighbors:
+                if 'class' not in n:
+                    acc.append(pos[n][1])
+            acc_mean = sum(acc) / len(acc)
+            new_pos[1] = acc_mean
+            pos[k] = new_pos
+
+    for k, v in pos.items():
+        if ' class' in k:
+            neighbors = G.neighbors(k)
+            new_pos = pos[k]
+            acc = []
+            for n in neighbors:
+                acc.append(pos[n][1])
+            acc_mean = sum(acc) / len(acc)
+            new_pos[1] = acc_mean
+            pos[k] = new_pos
+
+    return {'G': G, 'pos': pos, 'color': color}
