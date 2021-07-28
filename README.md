@@ -1,4 +1,4 @@
-# Uma análise da utilização do Keras na predição de diagnósticos de eletrocardiogramas utilizando a base PTB-XL
+# Uma Análise da Utilização do Keras na Predição de Diagnósticos de Eletrocardiogramas Utilizando a Base PTB-XL
 
 #### Aluno: [Alaor Barroso de Carvalho Neto](https://github.com/alaorneto)
 #### Orientadora: [Manoela Kohler](https://github.com/manoelakohler)
@@ -8,7 +8,6 @@
 Trabalho apresentado ao curso [BI MASTER](https://ica.puc-rio.ai/bi-master) como pré-requisito para conclusão de curso e obtenção de crédito na disciplina "Projetos de Sistemas Inteligentes de Apoio à Decisão".
 
 - [Link para o código](ptbxl/notebook.ipynb). 
-
 
 ---
 
